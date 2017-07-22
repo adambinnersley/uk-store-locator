@@ -2,7 +2,8 @@
     "name": "adamb/store-finder",
     "type": "library",
     "require": {
-        "adamb/database": "^1.0"
+        "adamb/database": "^1.0",
+        "codescheme/uk-postcodes": "^1.0"
     },
     "authors": [
         {
