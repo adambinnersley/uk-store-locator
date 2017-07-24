@@ -1,1 +1,1 @@
-# PHP Store Finder
+# PHP UK Store Locator
