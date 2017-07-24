@@ -1,6 +1,7 @@
 {
     "name": "adamb/uk-store-locator",
     "type": "library",
+    "license": "MIT",
     "require": {
         "adamb/database": "^1.0",
         "codescheme/uk-postcodes": "^1.0"
