@@ -1,7 +1,7 @@
 <?php
 
 /**
- * If a company has multiple UK store locations add the ability to select, add, update, delete new store locations into a database and search for the closest by postcode or latitude and longitude
+ * If a company has multiple UK store locations adds the ability to select, add, update, delete new store locations into a database and search for the closest by postcode or latitude and longitude
  * @author Adam Binnersley
  * @link https://www.adambinnersley.co.uk
  */
