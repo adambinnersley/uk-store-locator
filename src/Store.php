@@ -53,10 +53,19 @@ class Store{
     }
     
     /**
+     * Search for stores by name or partial name
+     * @param string $search this should be the name or part of the name of the store you are looking for
+     * @return array|boolean If any stores exist they will be returned as an array else will return false
+     */
+    public function getStoreByName($search){
+        return self::$db->query("SELECT * FROM `{$this->getStoreDBTableName()}` WHERE `name` LIKE ?;", array('%'.$search.'%'));
+    }
+    
+    /**
      * Returns a list of all of the stores in the database
      * @return array|false If stores exist in the database they will all be returned else if none exist will return false
      */
-    public function getStore(){
+    public function getStores(){
         return self::$db->selectAll($this->getStoreDBTableName());
     }
     
