@@ -126,8 +126,8 @@ class Store{
     
     /**
      * Finds the closest stores to the latitude an longitude given as long as results exist within the maximum distance set 
-     * @param float(10,6) $lat This should be the latitude you wish to search for the closest store from
-     * @param float(10,6) $lng This should be the longitude you wish to search for the closest store from
+     * @param float $lat This should be the latitude you wish to search for the closest store from
+     * @param float $lng This should be the longitude you wish to search for the closest store from
      * @param int $maxdistance This is the maximum distance you are willing to search for in the database
      * @param int $limit This is the maximum amount of results to display
      * @return array|boolean If results are available will return them as an array else will return false if no results are found
