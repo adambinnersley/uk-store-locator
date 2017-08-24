@@ -78,7 +78,7 @@ class Store{
     public function addStore($postcode, $information = array()){
         $location = self::$geocode->postcodeLookup($postcode);
         if($location->status == 200){
-            $variables = array_merge(array('lat' => $location->result->latitude, 'lng' => $location->result->longitude), $information);
+            $variables = array_merge(array('lat' => $location->result->latitude, 'lng' => $location->result->longitude), $information, array('postcode' => $postcode));
             return self::$db->insert($this->getStoreDBTableName(), $variables);
         }
         return false;
@@ -94,7 +94,7 @@ class Store{
     public function updateStore($id, $postcode, $information = array()){
         $location = self::$geocode->postcodeLookup($postcode);
         if($location->status == 200){
-            $variables = array_merge(array('lat' => $location->result->latitude, 'lng' => $location->result->longitude), $information);
+            $variables = array_merge(array('lat' => $location->result->latitude, 'lng' => $location->result->longitude), $information, array('postcode' => $postcode));
             return self::$db->update($this->getStoreDBTableName(), $variables, array('id' => intval($id)));
         }
         return false;
