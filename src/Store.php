@@ -133,6 +133,6 @@ class Store{
      * @return array|boolean If results are available will return them as an array else will return false if no results are found
      */
     public function findClosestByLatLng($lat, $lng, $maxdistance = 50, $limit = 5){
-        return self::$db->query("SELECT `{$this->getStoreDBTableName()}`.*, (3959 * acos(cos(radians('{$lat}')) * cos(radians(lat)) * cos(radians(lng) - radians('{$lng}')) + sin(radians('{$lat}')) * sin(radians(lat)))) AS `distance` FROM `{$this->getStoreDBTableName()}` HAVING `distance` < ? ORDER BY `distance` LIMIT ?;", array(intval($limit), intval($maxdistance)));
+        return self::$db->query("SELECT `{$this->getStoreDBTableName()}`.*, (3959 * acos(cos(radians(?)) * cos(radians(lat)) * cos(radians(lng) - radians(?)) + sin(radians(?)) * sin(radians(lat)))) AS `distance` FROM `{$this->getStoreDBTableName()}` HAVING `distance` < ? ORDER BY `distance` LIMIT ".intval($limit).";", array($lat, $lng, $lat, intval($maxdistance)));
     }
 }
