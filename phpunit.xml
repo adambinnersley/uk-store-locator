@@ -20,4 +20,11 @@
     <logging>
         <log type="coverage-clover" target="clover.xml"/>
     </logging>
+    
+    <php>
+        <var name="hostname" value="127.0.0.1" />
+        <var name="username" value="root" />
+        <var name="password" value="" />
+        <var name="database" value="stores" />
+    </php>
 </phpunit>
