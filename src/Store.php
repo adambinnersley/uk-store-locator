@@ -84,7 +84,7 @@ class Store{
     public function addStore($postcode, $information = []) {
         if(is_string($postcode) && !empty(trim($postcode)) && is_string($information['name'])){
             $location = $this->geocode->query($postcode);
-            if($location->status == 200) {
+            if($location->status == 200 && !empty($location->result)) {
                 $variables = array_merge(['lat' => $location->result->latitude, 'lng' => $location->result->longitude], $information, ['postcode' => strtoupper($postcode)]);
                 return $this->db->insert($this->getStoreDBTableName(), $variables);
             }
@@ -102,7 +102,7 @@ class Store{
     public function updateStore($id, $postcode, $information = []) {
         if(is_numeric($id) && is_string($postcode) && !empty(trim($postcode)) && is_array($information) && !empty($information)) {
             $location = $this->geocode->query($postcode);
-            if($location->status == 200) {
+            if($location->status == 200 && !empty($location->result)) {
                 $variables = array_merge(['lat' => $location->result->latitude, 'lng' => $location->result->longitude], $information, ['postcode' => strtoupper($postcode)]);
                 return $this->db->update($this->getStoreDBTableName(), $variables, ['id' => intval($id)]);
             }
@@ -128,7 +128,7 @@ class Store{
      */
     public function findClosest($postcode, $maxdistance = 50, $limit = 5) {
         $location = $this->geocode->query($postcode);
-        if($location->status == 200) {
+        if($location->status == 200 && !empty($location->result)) {
             return $this->findClosestByLatLng($location->result->latitude, $location->result->longitude, intval($maxdistance), intval($limit));
         }
         return false;
