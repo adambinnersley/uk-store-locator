@@ -1,15 +1,15 @@
 <?php
+/**
+ * If a company has multiple UK store locations adds the ability to select, add, update, delete new store locations into a database and search for the closest by postcode or latitude and longitude
+ * @author Adam Binnersley
+ * @link https://www.adambinnersley.co.uk
+ */
 
 namespace StoreLocator;
 
 use DBAL\Database;
 use Jabranr\PostcodesIO\PostcodesIO;
 
-/**
- * If a company has multiple UK store locations adds the ability to select, add, update, delete new store locations into a database and search for the closest by postcode or latitude and longitude
- * @author Adam Binnersley
- * @link https://www.adambinnersley.co.uk
- */
 class Store{
     protected $db;
     protected $geocode;
