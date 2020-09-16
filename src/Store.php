@@ -1,18 +1,18 @@
 <?php
 
+namespace StoreLocator;
+
+use DBAL\Database;
+use Jabranr\PostcodesIO\PostcodesIO;
+
 /**
  * If a company has multiple UK store locations adds the ability to select, add, update, delete new store locations into a database and search for the closest by postcode or latitude and longitude
  * @author Adam Binnersley
  * @link https://www.adambinnersley.co.uk
  */
-namespace StoreLocator;
-
-use DBAL\Database;
-use Codescheme\Ukpostcodes\Postcode;
-
 class Store{
-    protected static $db;
-    protected static $geocode;
+    protected $db;
+    protected $geocode;
 
     protected $store_table;
     
@@ -21,8 +21,8 @@ class Store{
      * @param Database $db This should be in instance of the database connection
      */
     public function __construct(Database $db) {
-        self::$db = $db;
-        self::$geocode = new Postcode();
+        $this->db = $db;
+        $this->geocode = new PostcodesIO();
     }
     
     /**
@@ -51,7 +51,7 @@ class Store{
      * @return array|false If the store exists it will be returned as an array else will return false
      */
     public function getStoreByID($id) {
-        return self::$db->select($this->getStoreDBTableName(), array('id' => intval($id)));
+        return $this->db->select($this->getStoreDBTableName(), ['id' => intval($id)]);
     }
     
     /**
@@ -60,7 +60,7 @@ class Store{
      * @return array|boolean If any stores exist they will be returned as an array else will return false
      */
     public function getStoreByName($search) {
-        $stores = self::$db->query("SELECT * FROM `{$this->getStoreDBTableName()}` WHERE `name` LIKE ?;", array('%'.$search.'%'));
+        $stores = $this->db->query("SELECT * FROM `{$this->getStoreDBTableName()}` WHERE `name` LIKE ?;", ['%'.$search.'%']);
         if(!empty($stores)) {
             return count($stores) > 1 ? $stores : $stores[0];
         }
@@ -72,7 +72,7 @@ class Store{
      * @return array|false If stores exist in the database they will all be returned else if none exist will return false
      */
     public function getStores() {
-        return self::$db->selectAll($this->getStoreDBTableName());
+        return $this->db->selectAll($this->getStoreDBTableName());
     }
     
     /**
@@ -81,12 +81,12 @@ class Store{
      * @param array $information This should be an array with the stores information in with variable/field names and values
      * @return boolean If the store is added successfully will return true else returns false
      */
-    public function addStore($postcode, $information = array()) {
+    public function addStore($postcode, $information = []) {
         if(is_string($postcode) && !empty(trim($postcode)) && is_string($information['name'])){
-            $location = self::$geocode->postcodeLookup($postcode);
+            $location = $this->geocode->query($postcode);
             if($location->status == 200) {
-                $variables = array_merge(array('lat' => $location->result->latitude, 'lng' => $location->result->longitude), $information, array('postcode' => strtoupper($postcode)));
-                return self::$db->insert($this->getStoreDBTableName(), $variables);
+                $variables = array_merge(['lat' => $location->result->latitude, 'lng' => $location->result->longitude], $information, ['postcode' => strtoupper($postcode)]);
+                return $this->db->insert($this->getStoreDBTableName(), $variables);
             }
         }
         return false;
@@ -95,16 +95,16 @@ class Store{
     /**
      * Updates a store and its information in the database
      * @param int $id The should be the unique ID assigned in the database
-     * @param string $postcode This should be the postcode of the store just incase it has moved and needs its location updating
+     * @param string $postcode This should be the postcode of the store if it has moved and needs its location updating
      * @param array $information This should be any information you wish to update, unchanged variables can be added but will have no impact
      * @return boolean If the store information is updated will return true else returns false
      */
-    public function updateStore($id, $postcode, $information = array()) {
+    public function updateStore($id, $postcode, $information = []) {
         if(is_numeric($id) && is_string($postcode) && !empty(trim($postcode)) && is_array($information) && !empty($information)) {
-            $location = self::$geocode->postcodeLookup($postcode);
+            $location = $this->geocode->query($postcode);
             if($location->status == 200) {
-                $variables = array_merge(array('lat' => $location->result->latitude, 'lng' => $location->result->longitude), $information, array('postcode' => strtoupper($postcode)));
-                return self::$db->update($this->getStoreDBTableName(), $variables, array('id' => intval($id)));
+                $variables = array_merge(['lat' => $location->result->latitude, 'lng' => $location->result->longitude], $information, ['postcode' => strtoupper($postcode)]);
+                return $this->db->update($this->getStoreDBTableName(), $variables, ['id' => intval($id)]);
             }
         }
         return false;
@@ -116,7 +116,7 @@ class Store{
      * @return boolean If the store is deleted will return true else returns false
      */
     public function deleteStore($id) {
-        return self::$db->delete($this->getStoreDBTableName(), array('id' => intval($id)), 1);
+        return $this->db->delete($this->getStoreDBTableName(), ['id' => intval($id)], 1);
     }
     
     /**
@@ -127,7 +127,7 @@ class Store{
      * @return array|boolean If results are available will return them as an array else will return false if no results are found or if postcode lookup fails
      */
     public function findClosest($postcode, $maxdistance = 50, $limit = 5) {
-        $location = self::$geocode->postcodeLookup($postcode);
+        $location = $this->geocode->query($postcode);
         if($location->status == 200) {
             return $this->findClosestByLatLng($location->result->latitude, $location->result->longitude, intval($maxdistance), intval($limit));
         }
@@ -143,6 +143,6 @@ class Store{
      * @return array|boolean If results are available will return them as an array else will return false if no results are found
      */
     public function findClosestByLatLng($lat, $lng, $maxdistance = 50, $limit = 5) {
-        return self::$db->query("SELECT `{$this->getStoreDBTableName()}`.*, (3959 * acos(cos(radians(?)) * cos(radians(lat)) * cos(radians(lng) - radians(?)) + sin(radians(?)) * sin(radians(lat)))) AS `distance` FROM `{$this->getStoreDBTableName()}` HAVING `distance` < ? ORDER BY `distance` LIMIT ".intval($limit).";", array($lat, $lng, $lat, intval($maxdistance)));
+        return $this->db->query("SELECT `{$this->getStoreDBTableName()}`.*, (3959 * acos(cos(radians(?)) * cos(radians(lat)) * cos(radians(lng) - radians(?)) + sin(radians(?)) * sin(radians(lat)))) AS `distance` FROM `{$this->getStoreDBTableName()}` HAVING `distance` < ? ORDER BY `distance` LIMIT ".intval($limit).";", [$lat, $lng, $lat, intval($maxdistance)]);
     }
 }

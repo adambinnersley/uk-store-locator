@@ -11,7 +11,7 @@ class StoreTest extends TestCase {
     protected $database;
     protected $store;
     
-    protected function setUp() {
+    protected function setUp(): void {
         $this->database = new Database($GLOBALS['hostname'], $GLOBALS['username'], $GLOBALS['password'], $GLOBALS['database']);
         if(!$this->database->isConnected()){
             $this->markTestSkipped(
@@ -24,7 +24,7 @@ class StoreTest extends TestCase {
         $this->store->setStoreDBTableName('stores');
     }
     
-    protected function tearDown() {
+    protected function tearDown(): void {
         $this->database = NULL;
         $this->store = NULL;
     }
