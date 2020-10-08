@@ -3,11 +3,11 @@
     "type": "library",
     "license": "MIT",
     "require": {
-        "adamb/database": "^1.0",
+        "adamb/database": "^1.5",
         "jabranr/postcodes-io": "^1.0"
     },
     "require-dev": {
-        "phpunit/phpunit": "^9.3"
+        "phpunit/phpunit": "*"
     },
     "authors": [
         {
