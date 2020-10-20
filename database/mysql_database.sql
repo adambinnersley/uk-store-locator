@@ -1,4 +1,3 @@
-DROP TABLE IF EXISTS `stores`;
 CREATE TABLE IF NOT EXISTS `stores` (
   `id` smallint(6) UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` varchar(60) NOT NULL,

@@ -21,9 +21,10 @@ class StoreTest extends TestCase
             );
         }
         $this->database->query(file_get_contents(dirname(dirname(__FILE__)).'/database/mysql_database.sql'));
-        $this->database->query(file_get_contents(dirname(__FILE__).'/sample_data/example_data.sql'));
         $this->store = new Store($this->database);
-        $this->store->setStoreDBTableName('stores');
+        $this->store->setStoreDBTableName($GLOBALS['database']);
+        $this->database->truncate($this->store->getStoreDBTableName());
+        $this->database->query(file_get_contents(dirname(__FILE__).'/sample_data/example_data.sql'));
     }
     
     protected function tearDown(): void
