@@ -111,10 +111,8 @@ class Store
     {
         if (is_numeric($id) && is_string($postcode) && !empty(trim($postcode)) && is_array($information) && !empty($information)) {
             $location = $this->geocode->query($postcode);
-            if ($location->status == 200 && !empty($location->result)) {
-                $variables = array_merge(['lat' => $location->result[0]->latitude, 'lng' => $location->result[0]->longitude], $information, ['postcode' => strtoupper($postcode)]);
-                return $this->db->update($this->getStoreDBTableName(), $variables, ['id' => intval($id)]);
-            }
+            $variables = ($location->status == 200 && !empty($location->result) ? array_merge(['lat' => $location->result[0]->latitude, 'lng' => $location->result[0]->longitude], $information, ['postcode' => strtoupper($postcode)]) : array_merge($information, ['postcode' => strtoupper($postcode)]));
+            return $this->db->update($this->getStoreDBTableName(), $variables, ['id' => intval($id)]);
         }
         return false;
     }
